@@ -1,6 +1,7 @@
 <?php
 
-use Mailgun\Messages\MessageBuilder;
+use Mailgun\Mailgun;
+use Mailgun\Message\MessageBuilder;
 use Orchestra\Testbench\TestCase;
 
 class MailgunTestCase extends TestCase
@@ -14,29 +15,27 @@ class MailgunTestCase extends TestCase
     /**
      * Setup the test environment.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->app->bind('mailgun.client', function(){
+        $this->app->bind('mailgun.client', function() {
             return new Http\Mock\Client();
         });
 
         $this->mailgunApi = Mockery::mock('Mailgun\Mailgun');
-        $this->mailgunApi->shouldReceive('setApiVersion')->andReturnSelf();
-        $this->mailgunApi->shouldReceive('setSslEnabled')->andReturnSelf();
-
-        $this->mailgunApi->shouldReceive('MessageBuilder')->andReturn(new MessageBuilder());
 
         $this->app->instance('Mailgun\Mailgun', $this->mailgunApi);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
+
         if ($container = Mockery::getContainer()) {
             $this->addToAssertionCount($container->mockery_getExpectationCount());
         }
+
         Mockery::close();
     }
 

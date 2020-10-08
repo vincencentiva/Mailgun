@@ -3,13 +3,13 @@
 namespace Bogardo\Mailgun\Mail;
 
 use Illuminate\Contracts\Config\Repository as Config;
-use Mailgun\Messages\MessageBuilder;
+use Mailgun\Message\MessageBuilder;
 
 class Message
 {
 
     /**
-     * @var \Mailgun\Messages\MessageBuilder
+     * @var \Mailgun\Message\MessageBuilder
      */
     protected $messageBuilder;
 
@@ -21,7 +21,7 @@ class Message
     /**
      * Message constructor.
      *
-     * @param \Mailgun\Messages\MessageBuilder        $messageBuilder
+     * @param \Mailgun\Message\MessageBuilder $messageBuilder
      * @param \Illuminate\Contracts\Config\Repository $config
      */
     public function __construct(MessageBuilder $messageBuilder, Config $config)
@@ -61,8 +61,8 @@ class Message
     public function to($address, $name = "", array $variables = [])
     {
         if (is_array($address)) {
-            foreach ($address as $email => $variables) {
-                $this->variables[$email] = $variables;
+            foreach ($address as $email => $var) {
+                $this->variables[$email] = $var;
 
                 $name = isset($variables['name']) ? $variables['name'] : null;
                 $this->messageBuilder->addToRecipient($email, ['full_name' => $name]);
@@ -351,7 +351,7 @@ class Message
     }
 
     /**
-     * @return \Mailgun\Messages\MessageBuilder
+     * @return \Mailgun\Message\MessageBuilder
      */
     public function builder()
     {
